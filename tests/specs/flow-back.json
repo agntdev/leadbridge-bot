@@ -1,19 +1,30 @@
 [
   {
-    "name": "Back",
+    "name": "back navigation during qualification flow",
     "steps": [
       {
+        "send": { "callback": "qualify:start" },
         "expect": [
-          {
-            "method": "sendMessage",
-            "payload": {
-              "text": "Edit previous answer in qualification sequence"
-            }
-          }
-        ],
-        "send": {
-          "callback": "flow:back"
-        }
+          { "method": "editMessageText", "payload": { "text": "This bot collects B2B lead information for our sales team.\n\nWe'll ask for your company name, contact details, and budget range. This takes about 2 minutes.\n\nReady to start?" } }
+        ]
+      },
+      {
+        "send": { "callback": "qualify:consent:yes" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "What's your company name?" } }
+        ]
+      },
+      {
+        "send": { "text": "Acme Corp" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "Who's the main contact person?" } }
+        ]
+      },
+      {
+        "send": { "callback": "flow:back" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "What's your company name?" } }
+        ]
       }
     ]
   }

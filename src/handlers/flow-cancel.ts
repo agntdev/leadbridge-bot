@@ -1,17 +1,39 @@
 import { Composer } from "grammy";
+import type { Ctx } from "../bot.js";
+import { inlineButton, inlineKeyboard } from "../toolkit/index.js";
 
-// SCAFFOLD — generated from the bot blueprint BEFORE the agent runs.
-// Keep a LIVE registration (.command / .callbackQuery / …) so this feature is
-// never an empty stub. Replace the reply body with real logic + copy; if you
-// change the user-facing text, update tests/specs to match EXACTLY.
-// Do NOT rewrite src/bot.ts — buildBot() already auto-loads this module.
-// Menu: wire this into /start via registerMainMenuItem({ label: "Cancel", data: "flow:cancel" }) if the toolkit exposes it.
-
-const composer = new Composer();
+const composer = new Composer<Ctx>();
 
 composer.callbackQuery("flow:cancel", async (ctx) => {
   await ctx.answerCallbackQuery();
-  await ctx.reply("Abort qualification process at any step");
+
+  const currentStep = ctx.session.step;
+  if (!currentStep || currentStep === "idle" || currentStep === "done") {
+    await ctx.reply("Nothing to cancel. Tap /start to begin.", {
+      reply_markup: inlineKeyboard([
+        [inlineButton("Start", "qualify:start")],
+      ]),
+    });
+    return;
+  }
+
+  // Reset qualification session
+  ctx.session.step = "idle";
+  ctx.session.history = [];
+  ctx.session.company = undefined;
+  ctx.session.contact = undefined;
+  ctx.session.email = undefined;
+  ctx.session.phone = undefined;
+  ctx.session.budget = undefined;
+  ctx.session.notes = undefined;
+  ctx.session.expiresAt = undefined;
+
+  await ctx.editMessageText(
+    "Qualification cancelled.\n\nNo data was saved. Tap /start to begin again.",
+    { reply_markup: inlineKeyboard([
+      [inlineButton("Back to menu", "menu:main")],
+    ]) },
+  );
 });
 
 export default composer;

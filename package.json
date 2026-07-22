@@ -12,8 +12,10 @@
     "build:worker": "npm run gen:handlers && npm run typecheck:worker && esbuild src/worker.ts --bundle --format=esm --platform=neutral --conditions=worker,browser --external:node:* --outfile=dist/worker.js && node scripts/check-worker-bundle.mjs"
   },
   "dependencies": {
+    "@types/nodemailer": "^8.0.1",
     "grammy": "^1.30.0",
-    "ioredis": "^5.4.1"
+    "ioredis": "^5.4.1",
+    "nodemailer": "^9.0.3"
   },
   "devDependencies": {
     "@types/node": "^22.0.0",
