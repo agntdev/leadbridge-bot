@@ -6,7 +6,29 @@ import type { StorageAdapter } from "grammy";
 // bot grows. Durable domain data must NOT live here — use the toolkit's
 // persistent storage (see AGENTS.md).
 export interface Session {
-  // example: step?: "awaiting_amount";
+  // Lead qualification flow state
+  step?:
+    | "idle"
+    | "awaiting_consent"
+    | "awaiting_company"
+    | "awaiting_contact"
+    | "awaiting_email"
+    | "awaiting_phone"
+    | "awaiting_budget"
+    | "awaiting_notes"
+    | "confirming"
+    | "done";
+  // Collected qualification data
+  company?: string;
+  contact?: string;
+  email?: string;
+  phone?: string;
+  budget?: string;
+  notes?: string;
+  // History for back navigation
+  history: string[];
+  // Flow timeout
+  expiresAt?: number;
 }
 
 export type Ctx = BotContext<Session>;
@@ -42,7 +64,7 @@ export interface BuildBotOptions {
  */
 export async function buildBot(token: string, opts: BuildBotOptions = {}) {
   const bot = createBot<Session>(token, {
-    initial: () => ({}),
+    initial: () => ({ step: "idle", history: [] }),
     storage: opts.storage,
   });
 

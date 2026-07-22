@@ -1,0 +1,260 @@
+[
+  {
+    "name": "qualification flow - full end-to-end",
+    "steps": [
+      {
+        "send": { "text": "/start" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "👋 Welcome! Tap a button below to get started." } }
+        ]
+      },
+      {
+        "send": { "callback": "qualify:start" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "This bot collects B2B lead information for our sales team.\n\nWe'll ask for your company name, contact details, and budget range. This takes about 2 minutes.\n\nReady to start?" } }
+        ]
+      },
+      {
+        "send": { "callback": "qualify:consent:yes" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "What's your company name?" } }
+        ]
+      },
+      {
+        "send": { "text": "Acme Corp" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "Who's the main contact person?" } }
+        ]
+      },
+      {
+        "send": { "text": "John Smith" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "What's their email address?" } }
+        ]
+      },
+      {
+        "send": { "text": "john@acme.com" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "What's their phone number?" } }
+        ]
+      },
+      {
+        "send": { "text": "+1-555-0123" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "What's the estimated budget range?" } }
+        ]
+      },
+      {
+        "send": { "callback": "budget:5k_20k" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "Any additional notes? (Optional — tap Skip to continue)" } }
+        ]
+      },
+      {
+        "send": { "callback": "qualify:notes:skip" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "Lead Summary\n============\n\nCompany: Acme Corp\nContact: John Smith\nEmail: john@acme.com\nPhone: +1-555-0123\nBudget: $5k–$20k\nNotes: —\n\nReview the details above. Tap Confirm to submit, or edit any field." } }
+        ]
+      },
+      {
+        "send": { "callback": "qualify:confirm" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "Lead submitted successfully!\n\nOur sales team will review your information and reach out within 48 hours.\n\nThank you for your interest." } }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "qualification flow - cancel at company step",
+    "steps": [
+      {
+        "send": { "callback": "qualify:start" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "This bot collects B2B lead information for our sales team.\n\nWe'll ask for your company name, contact details, and budget range. This takes about 2 minutes.\n\nReady to start?" } }
+        ]
+      },
+      {
+        "send": { "callback": "qualify:consent:yes" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "What's your company name?" } }
+        ]
+      },
+      {
+        "send": { "callback": "flow:cancel" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "Qualification cancelled.\n\nNo data was saved. Tap /start to begin again." } }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "qualification flow - back navigation",
+    "steps": [
+      {
+        "send": { "callback": "qualify:start" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "This bot collects B2B lead information for our sales team.\n\nWe'll ask for your company name, contact details, and budget range. This takes about 2 minutes.\n\nReady to start?" } }
+        ]
+      },
+      {
+        "send": { "callback": "qualify:consent:yes" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "What's your company name?" } }
+        ]
+      },
+      {
+        "send": { "text": "Acme Corp" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "Who's the main contact person?" } }
+        ]
+      },
+      {
+        "send": { "callback": "flow:back" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "What's your company name?" } }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "qualification flow - invalid email validation",
+    "steps": [
+      {
+        "send": { "callback": "qualify:start" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "This bot collects B2B lead information for our sales team.\n\nWe'll ask for your company name, contact details, and budget range. This takes about 2 minutes.\n\nReady to start?" } }
+        ]
+      },
+      {
+        "send": { "callback": "qualify:consent:yes" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "What's your company name?" } }
+        ]
+      },
+      {
+        "send": { "text": "Acme Corp" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "Who's the main contact person?" } }
+        ]
+      },
+      {
+        "send": { "text": "John Smith" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "What's their email address?" } }
+        ]
+      },
+      {
+        "send": { "text": "not-an-email" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "That doesn't look like a valid email. Please check and try again." } }
+        ]
+      },
+      {
+        "send": { "text": "john@acme.com" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "What's their phone number?" } }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "qualification flow - invalid phone validation",
+    "steps": [
+      {
+        "send": { "callback": "qualify:start" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "This bot collects B2B lead information for our sales team.\n\nWe'll ask for your company name, contact details, and budget range. This takes about 2 minutes.\n\nReady to start?" } }
+        ]
+      },
+      {
+        "send": { "callback": "qualify:consent:yes" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "What's your company name?" } }
+        ]
+      },
+      {
+        "send": { "text": "Acme Corp" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "Who's the main contact person?" } }
+        ]
+      },
+      {
+        "send": { "text": "John Smith" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "What's their email address?" } }
+        ]
+      },
+      {
+        "send": { "text": "john@acme.com" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "What's their phone number?" } }
+        ]
+      },
+      {
+        "send": { "text": "123" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "That doesn't look like a valid phone number. Include country code if international." } }
+        ]
+      },
+      {
+        "send": { "text": "+1-555-0123" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "What's the estimated budget range?" } }
+        ]
+      }
+    ]
+  },
+  {
+    "name": "qualification flow - with notes",
+    "steps": [
+      {
+        "send": { "callback": "qualify:start" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "This bot collects B2B lead information for our sales team.\n\nWe'll ask for your company name, contact details, and budget range. This takes about 2 minutes.\n\nReady to start?" } }
+        ]
+      },
+      {
+        "send": { "callback": "qualify:consent:yes" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "What's your company name?" } }
+        ]
+      },
+      {
+        "send": { "text": "Acme Corp" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "Who's the main contact person?" } }
+        ]
+      },
+      {
+        "send": { "text": "John Smith" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "What's their email address?" } }
+        ]
+      },
+      {
+        "send": { "text": "john@acme.com" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "What's their phone number?" } }
+        ]
+      },
+      {
+        "send": { "text": "+1-555-0123" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "What's the estimated budget range?" } }
+        ]
+      },
+      {
+        "send": { "callback": "budget:over_100k" },
+        "expect": [
+          { "method": "editMessageText", "payload": { "text": "Any additional notes? (Optional — tap Skip to continue)" } }
+        ]
+      },
+      {
+        "send": { "text": "Interested in enterprise plan" },
+        "expect": [
+          { "method": "sendMessage", "payload": { "text": "Lead Summary\n============\n\nCompany: Acme Corp\nContact: John Smith\nEmail: john@acme.com\nPhone: +1-555-0123\nBudget: Over $100k\nNotes: Interested in enterprise plan\n\nReview the details above. Tap Confirm to submit, or edit any field." } }
+        ]
+      }
+    ]
+  }
+]
